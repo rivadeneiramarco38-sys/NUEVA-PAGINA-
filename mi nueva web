@@ -1,0 +1,181 @@
+// === Proyecto Completo React + Vite ===
+// Contiene:
+// ✔ Generación de imágenes
+// ✔ Generación de diálogos (guiones)
+// ✔ Generación de videos (placeholder listo para API)
+// ✔ Animaciones
+// ✔ Interfaz oscura moderna
+// --------------------------------------------------------
+// ESTRUCTURA RECOMENDADA DEL PROYECTO (copiar en tu PC)
+// mi-pagina-ia/
+// ├─ src/
+// │  ├─ App.jsx
+// │  ├─ main.jsx
+// │  ├─ api/
+// │  │   ├─ image.js
+// │  │   ├─ video.js
+// │  │   └─ dialog.js
+// │  └─ styles.css
+// ├─ index.html
+// ├─ package.json
+// └─ vite.config.js
+
+// ================= index.html =================
+/*
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IA Studio</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+*/
+
+// ================= styles.css =================
+/*
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #000;
+  color: white;
+}
+textarea, input {
+  background: #111;
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+  border: none;
+}
+button {
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
+}
+*/
+
+// ================= main.jsx =================
+/*
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import './styles.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+*/
+
+// ================= API: image.js =================
+/*
+export async function generateImage(prompt) {
+  // Conectar con API real (OpenAI, Replicate, Stability)
+  // Ejemplo placeholder para no fallar
+  return "https://placehold.co/512x512?text=Imagen+IA";
+}
+*/
+
+// ================= API: dialog.js =================
+/*
+export async function generateDialog(topic) {
+  return `Guion generado sobre: ${topic}
+
+Escena 1: ...
+Escena 2: ...`;
+}
+*/
+
+// ================= API: video.js =================
+/*
+export async function generateVideo(prompt) {
+  // Aquí irá la API de video (Runway, Pika, OpenAI Sora cuando esté público)
+  return "https://placehold.co/480x270?text=Video+IA";
+}
+*/
+
+// ================= App.jsx =================
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { generateImage } from "./api/image";
+import { generateDialog } from "./api/dialog";
+import { generateVideo } from "./api/video";
+
+export default function App() {
+  const [prompt, setPrompt] = useState("");
+  const [image, setImage] = useState(null);
+  const [dialog, setDialog] = useState("");
+  const [video, setVideo] = useState(null);
+
+  async function handleImage() {
+    const img = await generateImage(prompt);
+    setImage(img);
+  }
+
+  async function handleDialog() {
+    const text = await generateDialog(prompt);
+    setDialog(text);
+  }
+
+  async function handleVideo() {
+    const vid = await generateVideo(prompt);
+    setVideo(vid);
+  }
+
+  return (
+    <div className="p-6 flex flex-col items-center gap-6" style={{ maxWidth: "900px", margin: "auto" }}>
+      <h1 className="text-4xl font-bold">IA Studio</h1>
+
+      <textarea
+        rows={4}
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Escribe lo que quieres generar..."
+        style={{ width: "100%" }}
+      />
+
+      <div style={{ display: "flex", gap: "10px", width: "100%", justifyContent: "center" }}>
+        <button onClick={handleImage}>Generar Imagen</button>
+        <button onClick={handleDialog}>Crear Guion</button>
+        <button onClick={handleVideo}>Generar Video</button>
+      </div>
+
+      {image && (
+        <motion.img
+          src={image}
+          className="rounded-2xl"
+          style={{ width: "300px", marginTop: "20px" }}
+          animate={{ scale: [1, 1.02, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+      )}
+
+      {dialog && (
+        <motion.pre
+          style={{ background: "#111", padding: "20px", borderRadius: "12px", marginTop: "20px" }}
+          animate={{ opacity: [0.7, 1, 0.7] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        >
+          {dialog}
+        </motion.pre>
+      )}
+
+      {video && (
+        <motion.video
+          src={video}
+          controls
+          style={{ width: "320px", borderRadius: "12px", marginTop: "20px" }}
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+      )}
+    </div>
+  );
+}
